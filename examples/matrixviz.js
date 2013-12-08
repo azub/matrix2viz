@@ -171,3 +171,18 @@ matrix.on('cell-mouse-click', function() {
     t.update('Cell Click');
     t.show();
 });
+
+matrix.on('label-mouse-in', function(index) {
+    t.update('Label Enter: '+index.index+','+index.subIndex);
+    t.show();
+});
+
+matrix.on('label-mouse-out', function() {
+    t.update('Label leave: ');
+    t.show();
+});
+
+matrix.on('label-mouse-click', function(index) {
+    t.update('Label click: '+index.index+','+index.subIndex);
+    t.show();
+});

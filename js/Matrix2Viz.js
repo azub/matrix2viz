@@ -11,7 +11,7 @@ Ext.define('Matrix2Viz', {
     layout: 'border',
     border: true,
     defaults: {
-        collapsible: false,
+        collapsible: true,
         split: true
     },
 
@@ -19,12 +19,9 @@ Ext.define('Matrix2Viz', {
         'cell-mouse-in',
         'cell-mouse-out',
         'cell-mouse-click',
-        'label_in',
-        'label_out',
-        'label_click',
-        'sub_label_in',
-        'sub_label_out',
-        'sub_label_click'
+        'label-mouse-in',
+        'label-mouse-out',
+        'label-mouse-click'
     ],
     config: {
         data: null,
@@ -66,6 +63,7 @@ Ext.define('Matrix2Viz', {
                 xtype: 'Matrix',
                 itemId: 'matrix',
                 region: 'center',
+                collapsible: false,
                 data: this.getData(),
                 dataTypes: this.getDataTypes(),
                 dataDimensions: this.dataDimensions,

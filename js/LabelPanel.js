@@ -1,6 +1,6 @@
 /**
  *
- * TODO: Think of supporting similar interface to Grid?
+ * TODO: Think of supporting interface similar to Grid?
  */
 
 Ext.define('LabelPanel', {
@@ -31,12 +31,9 @@ Ext.define('LabelPanel', {
     ],
 
     bubbleEvents: [
-        'label_in',
-        'label_out',
-        'label_click',
-        'sub_label_in',
-        'sub_label_out',
-        'sub_label_click'
+        'label-mouse-in',
+        'label-mouse-out',
+        'label-mouse-click'
     ],
 
     config: {
@@ -68,6 +65,15 @@ Ext.define('LabelPanel', {
 
         this.canvasOverlay.on('mouseout', function (event) {
             me.onMouseMove(-1, -1);
+        });
+
+        this.canvasOverlay.on('click', function (event) {
+            var scrollTop = me.body.getScrollTop();
+            var scrollLeft = me.body.getScrollLeft();
+            var x = event.browserEvent.pageX + scrollLeft - me.body.getX();
+            var y = event.browserEvent.pageY + scrollTop - me.body.getY();
+            var index = me.getLabel(x,y);
+            if (index != null) me.fireEvent('label-mouse-click', index);
         });
     },
 
@@ -110,19 +116,20 @@ Ext.define('LabelPanel', {
     onMouseMove: function (x, y) {
         var label = this.getLabel(x, y);
 
-        if (this.lastLabel == label) {
+        if ((this.lastLabel == null && label == null)
+            || (this.lastLabel != null && label != null && this.lastLabel.index == label.index && this.lastLabel.subIndex == label.subIndex)) {
             return;
         }
 
         if (this.lastLabel != null) {
             this.clearHighlight(this.lastLabel.index, this.getCellSize());
-            this.fireEvent('label-out', this.lastLabel.index);
+            this.fireEvent('label-mouse-out', this.lastLabel);
         }
 
         this.lastLabel = label;
         if (label != null) {
             this.highlight(label.index, this.getCellSize());
-            this.fireEvent('label-in', this.lastLabel.index);
+            this.fireEvent('label-mouse-in', label);
         }
     },
 
