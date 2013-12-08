@@ -146,3 +146,28 @@ var resizer = Ext.create('Ext.resizer.Resizer', {
 
 matrix.draw();
 
+var t = new Ext.ToolTip({
+    floating: {
+        shadow: false
+    },
+    html: 'Events',
+    hideDelay: 1,
+    closable: false
+});
+t.show();
+
+
+matrix.on('cell-mouse-in', function(index) {
+    t.update('Cell Enter: '+index.row+','+index.col);
+    t.show();
+});
+
+matrix.on('cell-mouse-out', function() {
+    t.update('Cell Leave');
+    t.show();
+});
+
+matrix.on('cell-mouse-click', function() {
+    t.update('Cell Click');
+    t.show();
+});

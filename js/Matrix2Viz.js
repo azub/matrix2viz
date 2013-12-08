@@ -14,10 +14,11 @@ Ext.define('Matrix2Viz', {
         collapsible: false,
         split: true
     },
+
     bubbleEvents: [
-        'cell_in',
-        'cell_out',
-        'cell_click',
+        'cell-mouse-in',
+        'cell-mouse-out',
+        'cell-mouse-click',
         'label_in',
         'label_out',
         'label_click',

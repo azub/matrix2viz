@@ -29,9 +29,9 @@ Ext.define('Matrix', {
         }
     ],
     bubbleEvents: [
-        'cell_in',
-        'cell_out',
-        'cell_click'
+        'cell-mouse-in',
+        'cell-mouse-out',
+        'cell-mouse-click'
     ],
     config: {
         data: null,
@@ -102,6 +102,20 @@ Ext.define('Matrix', {
             me.onMouseMove(-1, -1);
         });
 
+        this.matrixCanvasOverlay.on('click', function (event) {
+            var scrollTop = me.body.getScrollTop();
+            var scrollLeft = me.body.getScrollLeft();
+            var x = event.browserEvent.pageX + scrollLeft - me.body.getX();
+            var y = event.browserEvent.pageY + scrollTop - me.body.getY();
+
+            var index = me.getCellIndex(x, y);
+            if (index == null) {
+                return;
+            }
+            me.fireEvent('cell-mouse-click', index);
+        });
+
+
     },
 
     /**
@@ -112,7 +126,8 @@ Ext.define('Matrix', {
     onMouseMove: function (x, y) {
         var index = this.getCellIndex(x, y);
 
-        if (this.lastCellIndex == index) {
+        if ((this.lastCellIndex == null && index == null)
+            || (this.lastCellIndex != null && index != null && this.lastCellIndex.row == index.row && this.lastCellIndex.col == index.col)) {
             return;
         }
 
