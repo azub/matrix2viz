@@ -21,3 +21,43 @@ __matrix2viz__ is a customizable matrix visualization written in javascript. It 
  - ExtJs 4.2
 
 ## API
+
+### Key concepts:
+- cell data
+- row and column metadata
+
+### Construction
+ The following need to be provided at construction time:
+ 
+- rowMetadataRenderers -- lets matrix2viz know how to render row labels. It can contain multiple sub-elements: text labels, small graphic elements, etc. It's an array of:
+
+```javascript
+[
+ { name: 'label', size: 90, renderer: DefaultRenderer.text },
+ { name: 'metaNumber', size: 10, renderer: DefaultRenderer.barChart }
+]
+```
+- rowOrder (might change soon)
+
+Similarly for columns:
+- columns
+- columnMetadata
+- columnOrder
+
+- dataTypeRenderers: 
+
+```javascript
+{
+ 'gender': {
+   render: M2V.Util.dataType.renderGenderCell
+ },
+ 'binary': {
+   render: M2V.Util.dataType.renderAbsentPresentCell
+ },
+ 'numeric': {
+   render: function(ctx, value, row, column, boxSize) {
+    // custom code goes here
+  }
+}
+```
+
