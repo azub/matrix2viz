@@ -44,7 +44,8 @@ Ext.define('LabelPanel', {
         topY: 0,
         labelVisibleLength: null,
         cellSize: null,
-        propertiesToRender: []
+        renderers: null,
+        subLabels: []
     },
 
     initComponent: function () {
@@ -82,8 +83,8 @@ Ext.define('LabelPanel', {
         if (this.orientation === Orientation.HORIZONTAL) {
             index = Math.floor(y / this.cellSize.height);
             var xEnd = 0;
-            for (var i = 0; i < this.propertiesToRender.length; i++) {
-                var property = this.propertiesToRender[i];
+            for (var i = 0; i < this.subLabels.length; i++) {
+                var property = this.subLabels[i];
                 xEnd = xEnd + property.size;
                 if (x < xEnd) {
                     subIndex = i;
@@ -93,8 +94,8 @@ Ext.define('LabelPanel', {
         } else {
             index = Math.floor(x / this.cellSize.width);
             var yEnd = this.labelVisibleLength;
-            for (var i = 0; i < this.propertiesToRender.length; i++) {
-                var property = this.propertiesToRender[i];
+            for (var i = 0; i < this.subLabels.length; i++) {
+                var property = this.subLabels[i];
                 yEnd = yEnd - property.size;
                 if (y > yEnd) {
                     subIndex = i;
@@ -143,7 +144,7 @@ Ext.define('LabelPanel', {
 
         var labels = [];
         this.getLabelItems().forEach(function (item) {
-            labels.push(new Label(item, this.ctx, this.ctxOverlay));
+            labels.push(new Label(item, this.getRenderers(), this.ctx, this.ctxOverlay));
         }, this);
 
         this.labels = labels;
@@ -237,7 +238,6 @@ Ext.define('LabelPanel', {
 
     /**
      *
-     * @param propertiesToRender
      */
     draw: function () {
         this.refreshCanvasSize();
@@ -262,7 +262,7 @@ Ext.define('LabelPanel', {
 
         this.getOrder().forEach(function drawLabel(index) {
             var label = me.labels[index];
-            label.render(me.getOrientation(), me.getCellSize(), me.getPropertiesToRender());
+            label.render(me.getOrientation(), me.getCellSize(), me.getSubLabels());
             moveToNextPosition();
         });
         this.ctx.restore();

@@ -61,8 +61,6 @@ M2V.Util.dataType.renderAbsentPresentCell = function (ctx, value, row, column, s
     } else M2V.Util.dataType.renderNA(ctx, size);
 };
 
-
-
 //TODO: provide centering helper function
 var renderDefaults = {
     text: function (ctx, box, text) {
@@ -88,48 +86,100 @@ var renderDefaults = {
 };
 
 var order = h2m.ClusterHelper.produceClusteredOrder(convertedData);
+/*
+Cluster data structure:
+
+binary tree with nodes:
+{
+ left
+ right
+ distance
+ isLeaf
+}
+
+ */
+
+/**
+ *
+ * @type {{dimensions: {numberOfRows: Number, numberOfColumns: *}, getDataAt: Function}}
+ */
+var dataMatrix = {
+    dimensions: {numberOfRows: data.data.length, numberOfColumns: data.data[0].length},
+    getDataAt: function (rowIndex, columnIndex) {
+        return data.data[rowIndex][columnIndex];
+    }
+};
+
+
+
 
 var matrix = Ext.create('Matrix2Viz', {
     renderTo: "matrix_div",
     width: 900,
     height: 700,
 
-    data: data.data,
-    dataTypes : {
-        'gender': {
-            render: M2V.Util.dataType.renderGenderCell
+    data: dataMatrix,
+    labelFormat: {
+        row: [
+            {name: 'label', size: 90},
+            {name: 'group', size: 50}
+        ],
+        column: [
+            {name: 'label', size: 100},
+            {name: 'metaNumber', size: 10},
+            {name: 'type', size: 50}
+        ]
+    },
+    renderers: {
+        cell: {
+            'gender': {
+                render: M2V.Util.dataType.renderGenderCell
+            },
+            'binary': {
+                render: M2V.Util.dataType.renderAbsentPresentCell
+            },
+            'numeric': {
+                render: function(ctx, data, row, column, size) {
+                    var red = Math.round(255 * (data / (column.range.high - column.range.low)));
+                    ctx.fillStyle = "rgb(" + red + ",0,0)";
+                    ctx.fillRect(1, 1, size.width - 2, size.height - 2);
+                }
+            }
         },
-        'binary': {
-            render: M2V.Util.dataType.renderAbsentPresentCell
+        rowMetadata: {
+            'label': {
+                render: renderDefaults.text
+            },
+            'group': {
+                render: renderDefaults.text
+            }
         },
-        'numeric': {
-            render: function(ctx, data, row, column, size) {
-                var red = Math.round(255 * (data / (column.range.high - column.range.low)));
-                ctx.fillStyle = "rgb(" + red + ",0,0)";
-                ctx.fillRect(1, 1, size.width - 2, size.height - 2);
+        columnMetadata: {
+            'label': {
+                render: renderDefaults.text
+            },
+            'metaNumber': {
+                render: renderDefaults.metaNumber
+            },
+            'type': {
+                render: renderDefaults.text
             }
         }
     },
 
     rows: rows,
     rowOrder: order.rowOrder,
-    rowMetadata: [
-        {name: 'label', size: 90, render: renderDefaults.text},
-        {name: 'diagnosis', size: 50, render: renderDefaults.text}
-    ],
 
     columns: columns,
     columnOrder: order.columnOrder,
-    columnMetadata: [
-        {name: 'label', size: 100, render: renderDefaults.text},
-        {name: 'metaNumber', size: 10, render: renderDefaults.metaNumber},
-        {name: 'type', size: 50, render: renderDefaults.text}
-    ],
 
     cellSize: {
         width: 20,
         height: 10
     },
+
+    controlPanel: 'DefaultControlPanel',
+
     // TODO: add row/column options for both
     displayOptions: {
         showRowDendrogram: true,

@@ -25,15 +25,15 @@ Ext.define('Matrix2Viz', {
     ],
     config: {
         data: null,
-        dataTypes: null,
+        renderers: null,
+        labelFormat: null,
         rows: null,
         columns: null,
         rowOrder: null,
         columnOrder: null,
-        columnMetadata: [],
-        rowMetadata: [],
         cellSize: null,
-        displayOptions: null
+        displayOptions: null,
+        controlPanel: null
     },
 
     initComponent: function () {
@@ -45,8 +45,8 @@ Ext.define('Matrix2Viz', {
         var panelSizes = this.computePanelSizes(
             this.getDisplayOptions(),
             {width: this.width, height: this.height},
-            this.getRowMetadata(),
-            this.getColumnMetadata()
+            this.getLabelFormat().row,
+            this.getLabelFormat().column
         );
 
         if (this.cellSize == null) {
@@ -65,7 +65,7 @@ Ext.define('Matrix2Viz', {
                 region: 'center',
                 collapsible: false,
                 data: this.getData(),
-                dataTypes: this.getDataTypes(),
+                renderers: this.getRenderers().cell,
                 dataDimensions: this.dataDimensions,
                 cellSize: this.getCellSize(),
                 rowOrder: this.getRowOrder(),
@@ -84,11 +84,6 @@ Ext.define('Matrix2Viz', {
                 collapsible: false,
                 items: [
                     {
-                        xtype: 'DefaultControlPanel',
-                        itemId: 'controlPanel',
-                        matrix2viz: this
-                    },
-                    {
                         xtype: 'box',
                         width: 5
                     },
@@ -99,7 +94,8 @@ Ext.define('Matrix2Viz', {
                         order: this.getColumnOrder(),
                         orientation: Orientation.VERTICAL,
                         cellSize: this.getCellSize(),
-                        propertiesToRender: this.getColumnMetadata(),
+                        renderers: this.getRenderers().columnMetadata,
+                        subLabels: this.getLabelFormat().column,
                         width: matrixContainerSize.width,
                         labelVisibleLength: panelSizes.horizontalLabelHeight,
                         height: panelSizes.horizontalLabelHeight,
@@ -109,7 +105,7 @@ Ext.define('Matrix2Viz', {
                         xtype: 'HorizontalLabelNames',
                         itemId: 'topRightFillPanel',
                         border: false,
-                        propertiesToRender: this.getColumnMetadata(),
+                        propertiesToRender: this.getLabelFormat().column,
                         labelVisibleLength: panelSizes.horizontalLabelHeight,
                         width: 100
                     }
@@ -127,7 +123,8 @@ Ext.define('Matrix2Viz', {
                 orientation: Orientation.HORIZONTAL,
                 cellSize: this.getCellSize(),
                 height: matrixContainerSize.height,
-                propertiesToRender: this.getRowMetadata()
+                renderers: this.getRenderers().rowMetadata,
+                subLabels: this.getLabelFormat().row
             },
             {
                 xtype: 'panel',
@@ -144,7 +141,7 @@ Ext.define('Matrix2Viz', {
                         xtype: 'VerticalLabelNames',
                         itemId: 'bottomLeftFillPanel',
                         border: false,
-                        propertiesToRender: this.getRowMetadata(),
+                        propertiesToRender: this.getLabelFormat().row,
                         labelVisibleLength: panelSizes.verticalLabelWidth,
                         width: 100,
                         height: 100
@@ -192,6 +189,14 @@ Ext.define('Matrix2Viz', {
         this.verticalLabelPanel = this.getComponent("verticalLabelPanel");
         this.matrix = this.getComponent("matrix");
         this.northPanel = this.getComponent("northPanel");
+
+        this.northPanel.insert(0,
+            Ext.create( this.getControlPanel(), {
+                itemId: 'controlPanel',
+                matrix2viz: this
+            })
+        );
+
         this.horizontalLabelPanel = this.northPanel.getComponent("horizontalLabelPanel");
         this.controlPanel = this.northPanel.getComponent("controlPanel");
 
@@ -322,8 +327,8 @@ Ext.define('Matrix2Viz', {
         var panelSizes = this.computePanelSizes(
             this.getDisplayOptions(),
             {width: this.width, height: this.height},
-            this.getRowMetadata(),
-            this.getColumnMetadata()
+            this.getLabelFormat().row,
+            this.getLabelFormat().column
         );
         var newCellSize = panelSizes.cellSize;
         this.updateCellSizes(newCellSize);

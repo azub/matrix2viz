@@ -34,9 +34,11 @@ Ext.define('Matrix', {
         'cell-mouse-click'
     ],
     config: {
+        /**
+        *  @type {{dimensions: {numberOfRows: Number, numberOfColumns: Number}, getDataAt: Function}}
+        */
         data: null,
-        dataTypes: null,
-        dataDimensions: null,
+        renderers: null,
         rows: null,
         rowOrder: null,
         columns: null,
@@ -48,13 +50,16 @@ Ext.define('Matrix', {
      * @override
      */
     initComponent: function () {
+        this.lastCellIndex = null;
+        this.cells = [];
+        this.numberOfRows = this.getData().dimensions.numberOfRows;
+        this.numberOfColumns = this.getData().dimensions.numberOfColumns;
+
         this.calculateMatrixSize();
 /*
         this.setWidth(this.getScreenSize().width);
         this.setHeight(this.getScreenSize().height);
 */
-        this.lastCellIndex = null;
-        this.cells = [];
 
         this.callParent(arguments);
     },
@@ -158,7 +163,7 @@ Ext.define('Matrix', {
         var rowIndex = Math.floor(y / this.cellSize.height);
         var colIndex = Math.floor(x / this.cellSize.width);
         if (rowIndex < 0 || colIndex < 0) return null;
-        if (rowIndex >= this.dataDimensions.numRows || colIndex >= this.dataDimensions.numColumns) return null;
+        if (rowIndex >= this.numberOfRows || colIndex >= this.numberOfColumns) return null;
         return {
             row: rowIndex,
             col: colIndex
@@ -172,8 +177,8 @@ Ext.define('Matrix', {
 
     calculateMatrixSize: function () {
         this.matrixSize = {
-            width: this.dataDimensions.numColumns * this.getCellSize().width,
-            height: this.dataDimensions.numRows * this.getCellSize().height
+            width: this.numberOfColumns * this.getCellSize().width,
+            height: this.numberOfRows * this.getCellSize().height
         };
     },
 
@@ -185,18 +190,18 @@ Ext.define('Matrix', {
         this.lastCellIndex = null;
         this.cells = [];
 
-        for (var displayRowIndex = 0; displayRowIndex < this.dataDimensions.numRows; displayRowIndex++) {
+        for (var displayRowIndex = 0; displayRowIndex < this.numberOfRows; displayRowIndex++) {
             var rowIndex = this.rowOrder[displayRowIndex];
             var y = displayRowIndex * this.cellSize.height;
             var rowOfCells = [];
             this.cells.push(rowOfCells);
-            for (var displayColIndex = 0; displayColIndex < this.dataDimensions.numColumns; displayColIndex++) {
+            for (var displayColIndex = 0; displayColIndex < this.numberOfColumns; displayColIndex++) {
                 var colIndex = this.colOrder[displayColIndex];
                 var x = displayColIndex * this.cellSize.width;
-                var cellData = this.data[rowIndex][colIndex];
+                var cellData = this.getData().getDataAt(rowIndex,colIndex);
                 var cellRow = this.rows[rowIndex];
                 var cellColumn = this.columns[colIndex];
-                var renderFn = this.getDataTypes()[cellColumn.type].render;
+                var renderFn = this.getRenderers()[cellColumn.type].render;
                 var cell = new Cell(cellData, cellRow, cellColumn, this.ctx,
                     this.ctxOverlay, {x: x, y: y}, this.cellSize, renderFn);
                 rowOfCells.push(cell);

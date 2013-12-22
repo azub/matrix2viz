@@ -15,10 +15,11 @@
 
 Orientation = {HORIZONTAL: 1, VERTICAL: 2};
 
-function Label(data, ctx, ctxOverlay) {
+function Label(data, renderers, ctx, ctxOverlay) {
     this.data = data;
     this.ctx = ctx;
     this.ctxOverlay = ctxOverlay;
+    this.renderers = renderers;
 }
 
 Label.prototype.highlight = function (width, height) {
@@ -37,7 +38,7 @@ Label.prototype.clearHighlight = function () {
 };
 
 // Label container should call this, it should position(translate) things.
-Label.prototype.render = function (orientation, cellSize, propertiesToRender) {
+Label.prototype.render = function (orientation, cellSize, subLabels) {
     var me = this;
 
     function centerHorizontally(blockWidth) {
@@ -64,8 +65,8 @@ Label.prototype.render = function (orientation, cellSize, propertiesToRender) {
         rotate();
     }
 
-    for (var i = 0; i < propertiesToRender.length; i++) {
-        var property = propertiesToRender[i];
+    for (var i = 0; i < subLabels.length; i++) {
+        var property = subLabels[i];
         var box;
 
         if (orientation === Orientation.HORIZONTAL) {
@@ -75,7 +76,7 @@ Label.prototype.render = function (orientation, cellSize, propertiesToRender) {
         }
 
         this.ctx.save();
-        property.render(this.ctx, box, this.data[property.name]);
+        this.renderers[property.name].render(this.ctx, box, this.data[property.name]);
         this.ctx.restore();
         this.ctx.translate(property.size, 0);
     }

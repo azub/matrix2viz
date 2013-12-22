@@ -69,16 +69,16 @@ renderers: [
   // if all columns are of the same type pass single object here i.e. not array
   cell: [
    'data type A' : {renderer: ...},
-			'data type B' : {renderer: ...},
-			'data type C' : {renderer: ...}
+			'data type B' : {render: ...},
+			'data type C' : {render: ...}
   ], 
   columnMetadata: [
-  			'property X' : {renderer: ...},
-  			'property Y' : {renderer: ...}
+  			'property X' : {render: ...},
+  			'property Y' : {render: ...}
   ]
   rowMetadata: [
-  			'property 1' : {renderer: ...},
-			  'property 2' : {renderer: ...}
+  			'property 1' : {render: ...},
+			  'property 2' : {render: ...}
   ]
 ]
 ```
