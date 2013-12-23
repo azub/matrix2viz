@@ -1,19 +1,17 @@
 matrix2viz
 ==========
 
-## Status: work in progress... ETA: Decemeber 24, 2013
-
 ## Overview
 
-__matrix2viz__ is a customizable matrix visualization written in javascript. It takes care of some boring parts allowing developer to concentrate on more interesting things. 
+__matrix2viz__ is a matrix visualization ExtJs component. It takes care of some boring parts allowing developer to concentrate on more interesting things. 
 
 ##### matrix2viz takes care of:
-- zoom
-- scroll
-- resizing of different regions
+- exposing cell and label mouse events
+- zooming in and out
+- synchronized scrolling of matrix and label panels if the entire matrix doesn't fit on the screen
+- resizing and layout of visualization parts
 - cell and label positioning
 - cell and label highlighting on hover
-- exposes cell/label mouse events
 - dendrogram rendering
 
 #### Dependencies
@@ -27,40 +25,68 @@ Two major parts of visualization are:
 - matrix of cells
 - labels for the rows and columns
  
-Customization boils down to providing data and functions for rendering these data. There are two types of data:
+...Diagram goes here...
+
+### Configuration
+
+```javascript
+var visualization = Ext.create('Matrix2Viz', {
+	... configuration ...
+}
+```
+
+Configuration boils down to providing data and functions for rendering these data. There are two types of data:
 - cell data
 - row and column data
 
-#### Cell data
-Data object passed to the visualization must implement:
+#### data
+
+_data_ is an object that must provide _dimensions_ property and _getDataAt_ function:
 
 ```javascript
-getDataAt: function(rowIndex,columnIndex) // returns your cell data object
-dimensions: {numberOfRows: ..., numberOfColumns: ...} // dimensions of your data 
+data: {
+	getDataAt: function(rowIndex, columnIndex) {...}, // returns your cell data object
+	dimensions: {numberOfRows: ..., numberOfColumns: ...} // dimensions of your data 
+}
 ```
 
 The framework is data agnostic. In other words, your _getDataAt(rowIndex,columnIndex)_ function can return anything. The returned object is just passed to the rendering function you provide.
 	
-### Column metadata
-#### Config: __columnMetadata: []__
 Each column can have metadata associated with it. In the simplest case it could be just a text label. 
-Metadata for each column is defined as follows:
+
+#### columns
 ```javascript
-{
- // [optional] string representing datatype of this column.
- // If all your data are of the same type this is not needed.
- dataType : 'example type', 
- // Any number of properties of any type
- label : 'example label',
- someImportantValue: 123
-}
+columns: [
+	{
+ 		// [optional] string representing datatype of this column.
+ 		// If all your data are of the same type this is not needed.
+ 		type : 'example type', 
+ 		
+ 		// Any number of properties of any type
+ 		label : 'example label',
+ 		someImportantValue: 123
+	},
+	...
+]
 ```
 
-#### Config: __rowMetadata: []__
+#### rows
 
-RowMetadata is similar but doesn't have _dataType_ property.
+Row metadata is similar but doesn't suppot _type_ property.
 
-### Renderers
+```javascript
+rows: [
+		{
+ 			// Any number of properties of any type
+ 			label : 'example label',
+ 			taste: 'very tasty'
+		},
+		...
+]
+```
+
+### renderers
+
 Renderers draw your data using HTML5's _CanvasContext2d_. 
 
 Config:
