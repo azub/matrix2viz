@@ -182,6 +182,10 @@ Ext.define('Matrix', {
         };
     },
 
+    getPixelSize: function() {
+        return this.matrixSize;
+    },
+
     /**
      *
      */

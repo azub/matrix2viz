@@ -297,6 +297,7 @@ Ext.define('Matrix2Viz', {
      * @public
      */
     draw: function () {
+
         this.verticalLabelPanel.draw();
         this.horizontalLabelPanel.draw();
         this.dendrogramH.draw();
@@ -304,6 +305,31 @@ Ext.define('Matrix2Viz', {
         this.matrix.draw();
         this.bottomLeftFillPanel.draw();
         this.topRightFillPanel.draw();
+
+        this.makeSnug();
+    },
+
+    makeSnug: function() {
+        this.matrix.setAutoScroll(false);
+
+        // if matrix is smaller that available container, resize container to fit matrix.
+        var fullMatrixSize = this.matrix.getPixelSize();
+        if (fullMatrixSize.width < this.matrix.getWidth()) {
+            var newDendrogramWidth = this.getWidth() - this.verticalLabelPanel.getWidth() - fullMatrixSize.width - 20;
+            this.dendrogramV.setWidth(newDendrogramWidth);
+        } else {
+            var newDendrogramWidth = Math.max(this.getWidth() - this.verticalLabelPanel.getWidth() - fullMatrixSize.width - 20, 100);
+            this.dendrogramV.setWidth(newDendrogramWidth);
+        }
+        if (fullMatrixSize.height < this.matrix.getHeight()) {
+            var newDendrogramHeight = this.getHeight() - this.horizontalLabelPanel.getHeight() - fullMatrixSize.height - 20;
+            this.southPanel.setHeight(newDendrogramHeight);
+        } else {
+            var newDendrogramHeight = Math.max(this.getHeight() - this.horizontalLabelPanel.getHeight() - fullMatrixSize.height - 20, 100);
+            this.southPanel.setHeight(newDendrogramHeight);
+        }
+
+        this.matrix.setAutoScroll(true);
     },
 
     /**
