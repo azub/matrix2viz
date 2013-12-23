@@ -58,13 +58,14 @@ Each column can have metadata associated with it. In the simplest case it could 
 ```javascript
 columns: [
 	{
- 		// [optional] string representing datatype of this column.
- 		// If all your data are of the same type this is not needed.
- 		type : 'example type', 
+ 		// If all your cell data are of the same type this is not needed.
+ 		type : 'numeric', // [optional] string representing datatype of this column.
  		
- 		// Any number of properties of any type
- 		label : 'example label',
- 		someImportantValue: 123
+ 		// Any number of properties of any type.
+ 		label : 'Calories',
+ 		group : 'Nutrition',
+ 		average : 123,
+ 		...
 	},
 	...
 ]
@@ -78,8 +79,9 @@ Row metadata is similar but doesn't suppot _type_ property.
 rows: [
 		{
  			// Any number of properties of any type
- 			label : 'example label',
- 			taste: 'very tasty'
+ 			label : 'Pasta',
+ 			taste: 'Very tasty',
+ 			...
 		},
 		...
 ]
@@ -87,26 +89,34 @@ rows: [
 
 ### renderers
 
-Renderers draw your data using HTML5's _CanvasContext2d_. 
+Renderers draw your data using HTML5's _CanvasRenderingContext2d_. 
 
 Config:
 ```javascript
 renderers: [
-  // if all columns are of the same type pass single object here i.e. not array
   cell: [
-   'data type A' : {renderer: ...},
-			'data type B' : {render: ...},
-			'data type C' : {render: ...}
+  	'data type A' : {render: ...},
+	'data type B' : {render: ...},
+	'data type C' : {render: ...}
   ], 
   columnMetadata: [
-  			'property X' : {render: ...},
-  			'property Y' : {render: ...}
+  	'property X' : {render: ...},
+  	'property Y' : {render: ...}
   ]
   rowMetadata: [
-  			'property 1' : {render: ...},
-			  'property 2' : {render: ...}
+  	'property 1' : {render: ...},
+	'property 2' : {render: ...}
   ]
 ]
+```
+
+If all columns are of the same type, _cell_ should be a single object and not an array:
+
+```javascript
+renderers: [
+  cell: {
+  	'default' : {render: ...},
+  }
 ```
 
 Each cell renderer is specified as:
