@@ -95,17 +95,18 @@ Config:
 ```javascript
 renderers: [
   cell: [
-  	'data type A' : {render: ...},
-	'data type B' : {render: ...},
-	'data type C' : {render: ...}
+  	'numeric' : {render: ...},
+	'boolean' : {render: ...},
+	'some other data type' : {render: ...}
   ], 
   columnMetadata: [
-  	'property X' : {render: ...},
-  	'property Y' : {render: ...}
+  	'label' : {render: ...},
+  	'group' : {render: ...},
+  	'average' : {render: ...},
   ]
   rowMetadata: [
-  	'property 1' : {render: ...},
-	'property 2' : {render: ...}
+  	'label' : {render: ...},
+	'taste' : {render: ...}
   ]
 ]
 ```
@@ -122,10 +123,17 @@ renderers: [
 Each cell renderer is specified as:
 ```javascript
 'data type name' : {
-  renderer: function(canvasContext, drawingBoxSize, cellData, rowMetadata, columnMetadata) {...}
+  render: function(canvasContext, drawingBoxSize, cellData, rowMetadata, columnMetadata) {...}
 }
 ```
-__TODO__: describe each argument of renderer function.
+
+... insert diagram ...
+
+ - canvasContext
+ - drawingBoxSize -- this allows you to know how much space is available for your drawing, this is affected by zoom.
+ - cellData
+ - rowMetadata
+ - columnMetadata
 
 Each column or row renderer is specified as:
 ```javascript
@@ -133,52 +141,25 @@ Each column or row renderer is specified as:
   renderer: function(canvasContext, drawingBoxSize, propertyValue)
 }
 ```
+
 __TODO__: describe each argument of renderer function.
 
-### Labels
+### labelFormat
 
-	ColumnLabel
-		propertyName, size
-		propertyName, size		
-	Row Label
-		propertyName, size
-		propertyName, size
+This configuration parameter allows you to describe the format of your labels. Label can be composed of multiple elements: text labels, small graphic elements such as mini bar and pie charts, etc.
 
-
-### Construction
-__TODO__: update this section
-
- The following need to be provided at construction time:
+```javascript
+	labelFormat: {
+    	row: [
+            {name: 'label', size: 90},
+            {name: 'average', size: 10},
+            {name: 'group', size: 50}
+        ],
+        column: [
+            {name: 'label', size: 100},
+            {name: 'taste', size: 50}
+        ]
+    }
+```
+The order of elements in the array is the order label elements will be rendered in.
  
-- rowMetadataRenderers -- lets matrix2viz know how to render row labels. It can contain multiple sub-elements: text labels, small graphic elements, etc. It's an array of:
-
-```javascript
-[
- { name: 'label', size: 90, renderer: DefaultRenderer.text },
- { name: 'metaNumber', size: 10, renderer: DefaultRenderer.barChart }
-]
-```
-- rowOrder (might change soon)
-
-Similarly for columns:
-- columns
-- columnMetadata
-- columnOrder
-
-- dataTypeRenderers: 
-
-```javascript
-{
- 'gender': {
-   render: M2V.Util.dataType.renderGenderCell
- },
- 'binary': {
-   render: M2V.Util.dataType.renderAbsentPresentCell
- },
- 'numeric': {
-   render: function(ctx, value, row, column, boxSize) {
-    // custom code goes here
-  }
-}
-```
-
