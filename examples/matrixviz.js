@@ -173,6 +173,8 @@ var matrix = Ext.create('Matrix2Viz', {
     columns: columns,
     columnOrder: order.columnOrder,
 
+    clustering: order,
+
     cellSize: {
         width: 20,
         height: 10

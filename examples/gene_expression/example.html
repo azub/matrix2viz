@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="http://cdn.sencha.com/ext/gpl/4.2.1/ext-all-debug-w-comments.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.sencha.com/ext/gpl/4.2.1/resources/css/ext-all.css">
+</head>
+<body>
+<div id="matrix_div"></div>
+<script src="../../js/Cell.js"></script>
+<script src="../../js/Label.js"></script>
+<script src="../../js/LabelPanel.js"></script>
+<script src="../../js/Dendrogram.js"></script>
+<script src="../../js/Matrix.js"></script>
+<script src="../../js/DefaultControlPanel.js"></script>
+<script src="../../js/VerticalLabelNames.js"></script>
+<script src="../../js/HorizontalLabelNames.js"></script>
+<script src="../../js/ClusterHelper.js"></script>
+<script src="../../js/Matrix2Viz.js"></script>
+
+<script src="gene_expression.js"></script>
+
+<script src="jquery-2.0.3.min.js"></script>
+<script src="jquery.csv-0.71.min.js"></script>
+<script src="underscore-min.js"></script>
+<script src="underscore.normalize.min.js"></script>
+
+<input type="file" id="file_selection"/>
+
+<script>
+    function parseData(text) {
+        var rawData = $.csv.toArrays(text, {
+            separator: '\t'
+        });
+
+        var columns = [];
+        var colOrder = [];
+        var colLabels = rawData.splice(0, 1);
+        colLabels = colLabels[0];
+        colLabels.splice(0, 1);
+        for (var i = 0; i < colLabels.length; i++) {
+            var obj = {
+                label: colLabels[i]
+            };
+            columns.push(obj);
+            colOrder.push(i);
+        }
+
+        var rows = [];
+        var rowOrder = [];
+        for (var j = 0; j < rawData.length; j++) {
+            var row = rawData[j];
+            rows.push({label: row.splice(0, 1)});
+            rowOrder.push(j);
+            _.normalize(row,[-255,255]);
+        }
+
+        var data = rawData;
+
+        var dataMatrix = {
+            dimensions: {numberOfRows: data.length, numberOfColumns: data[0].length},
+            getDataAt: function (rowIndex, columnIndex) {
+                return data[rowIndex][columnIndex];
+            }
+        };
+
+        var order = {
+            columnClustering: null,
+            rowClustering: null
+        };
+
+        var matrix = Ext.create('Matrix2Viz', {
+            renderTo: "matrix_div",
+            width: 900,
+            height: 700,
+
+            data: dataMatrix,
+            labelFormat: {
+                row: [
+                    {name: 'label', size: 90}
+                ],
+                column: [
+                    {name: 'label', size: 100}
+                ]
+            },
+            renderers: {
+                cell: {
+                    'default': {
+                        render: function (ctx, value, row, column, size) {
+                            var color;
+                            if (value > 0) {
+                                color = "rgb(" + Math.round(value) + ",0,0)";
+                            } else {
+                                color = "rgb(0," + Math.round(Math.abs(value)) + ",0)";
+                            }
+                            ctx.fillStyle = color;
+                            ctx.fillRect(1, 1, size.width - 2, size.height - 2);
+                        }
+                    }
+                },
+                rowMetadata: {
+                    'label': {
+                        render: renderDefaults.text
+                    }
+                },
+                columnMetadata: {
+                    'label': {
+                        render: renderDefaults.text
+                    }
+                }
+            },
+
+            rows: rows,
+            rowOrder: rowOrder,
+            columns: columns,
+            columnOrder: colOrder,
+            clustering: order,
+
+            cellSize: {
+                width: 20,
+                height: 10
+            },
+
+            controlPanel: 'DefaultControlPanel',
+
+            // TODO: add row/column options for both
+            displayOptions: {
+                showRowDendrogram: true,
+                showColumnDendrogram: true,
+                showRowLabels: true,
+                showColumnLabels: true
+            }
+        });
+
+        var resizer = Ext.create('Ext.resizer.Resizer', {
+            handles: 'all',
+            target: matrix
+        });
+
+        matrix.draw();
+    }
+    function handleFileSelect(evt) {
+        var f = evt.target.files[0]; // FileList object
+        var reader = new FileReader();
+
+        reader.onload = (function (e) {
+            var text = e.target.result;
+            parseData(text);
+        });
+
+        // Read in the image file as a data URL.
+        reader.readAsText(f);
+    }
+
+    document.getElementById('file_selection').addEventListener('change', handleFileSelect, false);
+</script>
+
+</body>
+</html>

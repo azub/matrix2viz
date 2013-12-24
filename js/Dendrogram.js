@@ -58,6 +58,8 @@ Ext.define('Dendrogram', {
     draw: function () {
         this.refreshCanvasSize();
 
+        if (this.clusterTree === null) return;
+
         var cluster = this.getClusterTree();
         var maxDistance = cluster.distance;
         var ctx = this.ctx;

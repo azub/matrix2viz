@@ -31,6 +31,7 @@ Ext.define('Matrix2Viz', {
         columns: null,
         rowOrder: null,
         columnOrder: null,
+        clustering: null,
         cellSize: null,
         displayOptions: null,
         controlPanel: null
@@ -157,7 +158,7 @@ Ext.define('Matrix2Viz', {
                         dendrogramHeight: panelSizes.dendrogramHeight,
                         itemSize: this.getCellSize().width,
                         numItems: this.getColumns().length,
-                        clusterTree: order.columnClustering,
+                        clusterTree: this.getClustering().columnClustering,
                         width: matrixContainerSize.width,
                         height: panelSizes.dendrogramHeight,
                         border: false
@@ -174,7 +175,7 @@ Ext.define('Matrix2Viz', {
                 dendrogramHeight: panelSizes.dendrogramHeight,
                 itemSize: this.getCellSize().height,
                 numItems: this.getRows().length,
-                clusterTree: order.rowClustering,
+                clusterTree: this.getClustering().rowClustering,
                 height: matrixContainerSize.height,
                 width: panelSizes.dendrogramHeight
             }

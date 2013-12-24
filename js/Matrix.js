@@ -205,7 +205,8 @@ Ext.define('Matrix', {
                 var cellData = this.getData().getDataAt(rowIndex,colIndex);
                 var cellRow = this.rows[rowIndex];
                 var cellColumn = this.columns[colIndex];
-                var renderFn = this.getRenderers()[cellColumn.type].render;
+                var cellType = cellColumn.type || 'default';
+                var renderFn = this.getRenderers()[cellType].render;
                 var cell = new Cell(cellData, cellRow, cellColumn, this.ctx,
                     this.ctxOverlay, {x: x, y: y}, this.cellSize, renderFn);
                 rowOfCells.push(cell);
