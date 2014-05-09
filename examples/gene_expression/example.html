@@ -19,10 +19,10 @@
 
 <script src="gene_expression.js"></script>
 
-<script src="jquery-2.0.3.min.js"></script>
-<script src="jquery.csv-0.71.min.js"></script>
-<script src="underscore-min.js"></script>
-<script src="underscore.normalize.min.js"></script>
+<script src="../third-party/jquery-2.0.3.min.js"></script>
+<script src="../third-party/jquery.csv-0.71.min.js"></script>
+<script src="../third-party/underscore-min.js"></script>
+<script src="../third-party/underscore.normalize.min.js"></script>
 
 <input type="file" id="file_selection"/>
 
@@ -45,16 +45,17 @@
             colOrder.push(i);
         }
 
+        var data = [];
         var rows = [];
         var rowOrder = [];
         for (var j = 0; j < rawData.length; j++) {
             var row = rawData[j];
             rows.push({label: row.splice(0, 1)});
             rowOrder.push(j);
-            _.normalize(row,[-255,255]);
+            row = _.map(row, function(value) {return parseFloat(value);});
+            row = _.normalize(row,[-255,255]);
+            data.push(row);
         }
-
-        var data = rawData;
 
         var dataMatrix = {
             dimensions: {numberOfRows: data.length, numberOfColumns: data[0].length},

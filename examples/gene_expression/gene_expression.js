@@ -3,7 +3,10 @@ Ext.require([
 ]);
 
 
-M2V = {};
+if ( typeof M2V == 'undefined') {
+    M2V = {};
+}
+
 M2V.Util = {};
 M2V.Util.dataType = {};
 

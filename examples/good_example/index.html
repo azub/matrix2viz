@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="http://cdn.sencha.com/ext/gpl/4.2.1/ext-all-debug-w-comments.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.sencha.com/ext/gpl/4.2.1/resources/css/ext-all.css">
+    <style type="text/css">
+        .dropzone {
+            border: 2px dashed #ccc;
+            width: 100px;
+            height: 75px;
+            margin: 5px;
+            text-align: center;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div id="matrix_div"></div>
+<script src="../../js/Cell.js"></script>
+<script src="../../js/Label.js"></script>
+<script src="../../js/LabelPanel.js"></script>
+<script src="../../js/Dendrogram.js"></script>
+<script src="../../js/Matrix.js"></script>
+<script src="../../js/DefaultControlPanel.js"></script>
+<script src="../../js/VerticalLabelNames.js"></script>
+<script src="../../js/HorizontalLabelNames.js"></script>
+<script src="../../js/ClusterHelper.js"></script>
+<script src="../../js/Matrix2Viz.js"></script>
+
+<script src="../third-party/jquery-2.0.3.min.js"></script>
+<script src="../third-party/jquery.csv-0.71.min.js"></script>
+<script src="../third-party/underscore-min.js"></script>
+<script src="../third-party/underscore.normalize.min.js"></script>
+<script src="../../third-party/clusterfck.js"></script>
+<script src="../../third-party/transpose.js"></script>
+<script src="../../js/ClusterHelper.js"></script>
+
+<script src="../common/fileParsers.js"></script>
+<script src="../gene_expression/gene_expression.js"></script>
+
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+        var stash = {
+            data:{},
+            row:{},
+            column:{}
+        };
+
+        var helpers = {
+            parse: function(e, result) {
+                var file = e.dataTransfer.files[0];
+
+                var reader = new FileReader();
+
+                reader.onload = (function (e) {
+                    var text = e.target.result;
+                    var parsedData = M2V.parsers.parseSimpleData(text);
+                    result = parsedData;
+                    //M2V.createMatrix(parsedData);
+                });
+
+                // Read in the image file as a data URL.
+                reader.readAsText(file);
+            }
+        };
+
+        $.event.props.push('dataTransfer');
+        $('.dropzone').on({
+            dragenter: function(e) {
+                $(this).css('background-color', 'lightBlue');
+                e.preventDefault();
+            },
+            dragover: function(e) {
+                e.preventDefault();
+            },
+            dragleave: function(e) {
+                $(this).css('background-color', 'white');
+            },
+            drop: function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (e.target.id == "matrixDropZone") {
+
+                }
+            }
+        });
+    });
+</script>
+
+
+<div>
+    <div class="dropzone" id="matrixDropZone">
+        Data file
+    </div>
+    <div class="dropzone" id="rowDropZone">
+        Row file
+    </div>
+    <div class="dropzone" id="columnDropZone">
+        Row file
+    </div>
+</div>
+
+</body>
+</html>
