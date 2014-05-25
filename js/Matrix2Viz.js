@@ -1,10 +1,10 @@
-//Ext.require([
-//    'Matrix',
-//    'LabelPanel',
-//    'VerticalLabelNames',
-//    'HorizontalLabelNames',
-//    'DefaultControlPanel'
-//]);
+Ext.require([
+    'Matrix',
+    'LabelPanel',
+    'VerticalLabelNames',
+    'HorizontalLabelNames',
+    'DefaultControlPanel'
+]);
 
 Ext.define('Matrix2Viz', {
     extend: 'Ext.panel.Panel',
