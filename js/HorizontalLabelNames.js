@@ -53,6 +53,10 @@ Ext.define('HorizontalLabelNames', {
         this.canvasOverlay.dom.height = this.getLabelVisibleLength();
     },
 
+    getImageData: function() {
+        return this.ctx.getImageData(0, 0, this.getWidth(), this.getHeight());
+    },
+
     /**
      *
      */

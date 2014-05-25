@@ -1,4 +1,17 @@
 /**
+ * Matrix canvas and overlay canvas (for highlighting/interaction effects)
+ *
+ * Track mouse events,
+ *
+ * Instantiate cells.
+ *
+ * TODO: Colour legend
+ * Thoughts:
+ *  - Make drawing function responsible for producing colour legend
+ *  - They should implement drawColourLegend()
+ *  - Default functions will know about range.
+ *  - Provide default implementation (pass hash of value:label, or just array of values)
+ *
  *
  */
 Ext.define('Matrix', {
@@ -56,16 +69,11 @@ Ext.define('Matrix', {
         this.numberOfColumns = this.getData().dimensions.numberOfColumns;
 
         this.calculateMatrixSize();
-/*
-        this.setWidth(this.getScreenSize().width);
-        this.setHeight(this.getScreenSize().height);
-*/
 
         this.callParent(arguments);
     },
 
     /**
-     *
      * @override
      */
     afterRender: function () {
@@ -92,6 +100,7 @@ Ext.define('Matrix', {
     },
 
     /**
+     *
      */
     initListeners: function () {
         var me = this;
@@ -119,8 +128,6 @@ Ext.define('Matrix', {
             }
             me.fireEvent('cell-mouse-click', index);
         });
-
-
     },
 
     /**
@@ -210,6 +217,26 @@ Ext.define('Matrix', {
                 var cell = new Cell(cellData, cellRow, cellColumn, this.ctx,
                     this.ctxOverlay, {x: x, y: y}, this.cellSize, renderFn);
                 rowOfCells.push(cell);
+                cell.draw();
+            }
+        }
+    },
+
+    // TODO: refactor!!!
+    drawOn: function (ctx) {
+        for (var displayRowIndex = 0; displayRowIndex < this.numberOfRows; displayRowIndex++) {
+            var rowIndex = this.rowOrder[displayRowIndex];
+            var y = displayRowIndex * this.cellSize.height;
+            for (var displayColIndex = 0; displayColIndex < this.numberOfColumns; displayColIndex++) {
+                var colIndex = this.colOrder[displayColIndex];
+                var x = displayColIndex * this.cellSize.width;
+                var cellData = this.getData().getDataAt(rowIndex,colIndex);
+                var cellRow = this.rows[rowIndex];
+                var cellColumn = this.columns[colIndex];
+                var cellType = cellColumn.type || 'default';
+                var renderFn = this.getRenderers()[cellType].render;
+                var cell = new Cell(cellData, cellRow, cellColumn, ctx,
+                    null, {x: x, y: y}, this.cellSize, renderFn);
                 cell.draw();
             }
         }

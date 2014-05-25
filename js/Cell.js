@@ -7,7 +7,7 @@
  * @param ctxOverlay
  * @param position
  * @param size
- * @param renderFn
+ * @param renderFn -
  * @constructor
  */
 function Cell(cellData, cellRow, cellColumn, ctx, ctxOverlay, position, size, renderFn) {
@@ -21,14 +21,25 @@ function Cell(cellData, cellRow, cellColumn, ctx, ctxOverlay, position, size, re
     this.renderCellContent = renderFn;
 }
 
+/**
+ *
+ */
 Cell.prototype.draw = function () {
-    this.ctx.save();
-    this.ctx.translate(this.position.x, this.position.y);
-    // TODO: getCellData -> data?
-    this.renderCellContent(this.ctx, this.data, this.row, this.column, this.size);
-    this.ctx.restore()
+    this.drawOn(this.ctx);
 };
 
+Cell.prototype.drawOn = function (ctx) {
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    // TODO: Allow drawing only within rectangle specified by size.
+    // User provided drawing function.
+    this.renderCellContent(ctx, this.data, this.row, this.column, this.size);
+    ctx.restore()
+};
+
+/**
+ * TODO: provide more defaults, allow overriding.
+ */
 Cell.prototype.highlight = function () {
     this.ctxOverlay.save();
     this.ctxOverlay.translate(this.position.x, this.position.y);
@@ -36,6 +47,9 @@ Cell.prototype.highlight = function () {
     this.ctxOverlay.restore()
 };
 
+/**
+ *
+ */
 Cell.prototype.clearHighlight = function () {
     this.ctxOverlay.save();
     this.ctxOverlay.translate(this.position.x, this.position.y);
@@ -43,20 +57,14 @@ Cell.prototype.clearHighlight = function () {
     this.ctxOverlay.restore()
 };
 
-/*
-Cell.prototype.renderCellContent = function (ctx, data, row, column, size) {
-    if (column.type === 'gender') {
-        M2V.Util.dataType.renderGenderCell(ctx, data, size);
-    } else if (column.type === 'binary') {
-        M2V.Util.dataType.renderAbsentPresentCell(ctx, data, size);
-    } else {
-        var red = Math.round(255 * (data / (column.range.high - column.range.low)));
-        ctx.fillStyle = "rgb(" + red + ",0,0)";
-        ctx.fillRect(1, 1, size.width - 2, size.height - 2);
-    }
-};
-*/
-
+/**
+ *
+ * @param ctx
+ * @param data
+ * @param row
+ * @param column
+ * @param size
+ */
 Cell.prototype.renderCellContentHighlight = function (ctx, data, row, column, size) {
     ctx.strokeStyle = "rgb(0,0,0)";
     ctx.lineWidth = 1;

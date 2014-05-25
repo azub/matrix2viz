@@ -38,23 +38,27 @@ Label.prototype.clearHighlight = function () {
 };
 
 // Label container should call this, it should position(translate) things.
-Label.prototype.render = function (orientation, cellSize, subLabels) {
+Label.prototype.render = function (orientation, cellSize, subLabels, context) {
+    var ctx = context;
     var me = this;
 
+    if (typeof ctx === 'undefined') {
+        ctx = me.ctx;
+    }
     function centerHorizontally(blockWidth) {
-        me.ctx.translate(cellSize.width / 2 + blockWidth / 2, 0);
+        ctx.translate(cellSize.width / 2 + blockWidth / 2, 0);
     }
 
     function centerVertically(blockHeight) {
-        me.ctx.translate(0, cellSize.height / 2 + blockHeight / 2);
+        ctx.translate(0, cellSize.height / 2 + blockHeight / 2);
     }
 
     function rotate() {
-        me.ctx.rotate(-0.5 * Math.PI);
+        ctx.rotate(-0.5 * Math.PI);
     }
 
     function finish() {
-        me.ctx.restore();
+        ctx.restore();
     }
 
     this.ctx.save();
@@ -75,10 +79,10 @@ Label.prototype.render = function (orientation, cellSize, subLabels) {
             box = {width: property.size, height: cellSize.width};
         }
 
-        this.ctx.save();
-        this.renderers[property.name].render(this.ctx, box, this.data[property.name]);
-        this.ctx.restore();
-        this.ctx.translate(property.size, 0);
+        ctx.save();
+        this.renderers[property.name].render(ctx, box, this.data[property.name]);
+        ctx.restore();
+        ctx.translate(property.size, 0);
     }
 
     finish();

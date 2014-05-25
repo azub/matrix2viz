@@ -74,7 +74,7 @@ Ext.define('LabelPanel', {
             var x = event.browserEvent.pageX + scrollLeft - me.body.getX();
             var y = event.browserEvent.pageY + scrollTop - me.body.getY();
             var index = me.getLabel(x,y);
-            if (index != null) me.fireEvent('label-mouse-click', index);
+            if (index != null) me.fireEvent('label-mouse-click',index);
         });
     },
 
@@ -109,6 +109,7 @@ Ext.define('LabelPanel', {
         }
 
         return {
+            data: this.labelItems[ this.getOrder()[index] ][this.subLabels[subIndex].name],
             index: index,
             subIndex: subIndex
         };
@@ -236,36 +237,47 @@ Ext.define('LabelPanel', {
         this.canvas.dom.scrollTop.marginTop = -1 * offset;
     },
 
+    getImageData: function() {
+        return this.ctx.getImageData(0, 0, this.width, this.height);
+    },
+
+    drawOn: function(ctx) {
+        ctx.save();
+
+        if (this.getOrientation() == Orientation.HORIZONTAL) {
+            ctx.translate(0, 0);
+        } else {
+            ctx.translate(0, this.getLabelVisibleLength() - 5);
+        }
+
+        var me = this;
+
+        this.getOrder().forEach(function drawLabel(index) {
+            var label = me.labels[index];
+            label.render(me.getOrientation(), me.getCellSize(), me.getSubLabels(), ctx);
+            me.moveToNextPosition(ctx);
+        });
+        ctx.restore();
+    },
+
+    /**
+     * @private
+     * @param ctx
+     */
+    moveToNextPosition: function(ctx) {
+        if (this.getOrientation() === Orientation.HORIZONTAL) {
+            ctx.translate(0, this.getCellSize().height);
+        } else {
+            ctx.translate(this.getCellSize().width, 0);
+        }
+    },
+
     /**
      *
      */
     draw: function () {
         this.refreshCanvasSize();
-
-        var me = this;
-
-        function moveToNextPosition() {
-            if (me.getOrientation() === Orientation.HORIZONTAL) {
-                me.ctx.translate(0, me.getCellSize().height);
-            } else {
-                me.ctx.translate(me.getCellSize().width, 0);
-            }
-        }
-
-        this.ctx.save();
-
-        if (me.getOrientation() == Orientation.HORIZONTAL) {
-            this.ctx.translate(0, 0);
-        } else {
-            this.ctx.translate(0, me.getLabelVisibleLength() - 5);
-        }
-
-        this.getOrder().forEach(function drawLabel(index) {
-            var label = me.labels[index];
-            label.render(me.getOrientation(), me.getCellSize(), me.getSubLabels());
-            moveToNextPosition();
-        });
-        this.ctx.restore();
+        this.drawOn(this.ctx);
     }
 
 });

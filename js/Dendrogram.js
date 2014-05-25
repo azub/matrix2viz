@@ -55,6 +55,41 @@ Ext.define('Dendrogram', {
         }
     },
 
+
+    /*
+        Draw (N) 5 clusters
+        Determine max distance to draw. Is it possible?
+
+        Determine tree height.
+        Use max tree height to cut off the details based on number of clusters to show AND available space.
+            write function(or find existing one) that returns min/max/average of node attribute at specified level.
+
+
+
+        First pass:
+            just return max y coordinate after cut-off, so that it draws on top of other lines. Could be messy but should work.
+        Second pass:
+            Make it right and fast.
+
+
+          __\__
+        _|_    |   ->   ___|___
+        |  |   |
+
+
+        node
+            finalIndex -- on leaf nodes
+            distance
+     */
+
+
+
+
+
+    getImageData: function() {
+        return this.ctx.getImageData(0, 0, this.width, this.height);
+    },
+
     draw: function () {
         this.refreshCanvasSize();
 
@@ -87,10 +122,18 @@ Ext.define('Dendrogram', {
                 var x, y;
                 if (orientation === "horizontal") {
                     x = xyLeft.x + (xyRight.x - xyLeft.x) / 2;
-                    y = height * (node.distance / maxDistance);
+                    if (node.level > 2) {
+                        y = 0;
+                    } else {
+                        y = height * (node.distance / maxDistance);
+                    }
                 } else {
                     y = xyLeft.y + (xyRight.y - xyLeft.y) / 2;
-                    x = height * (node.distance / maxDistance);
+                    if (node.level > 2) {
+                        x = 0;
+                    } else {
+                        x = height * (node.distance / maxDistance);
+                    }
                 }
                 ctx.strokeStyle = "black";
                 ctx.beginPath();

@@ -22,6 +22,84 @@ Ext.define('DefaultControlPanel', {
                 items: [
                     {
                         xtype: 'button',
+                        text: 'legend',
+                        width: 40,
+                        height: 20,
+                        handler: function() {
+                            var window = Ext.create('Ext.window.Window', {
+                                title: 'Legend',
+                                height: 200,
+                                width: 400,
+                                layout: 'fit',
+                                items: [
+                                    {
+                                        xtype: 'component',
+                                        autoEl: 'canvas',
+                                        itemId: 'legendCanvas'
+                                    }
+                                ]
+                            });
+                            window.show();
+
+                            var stuff = [
+                                {
+                                    name:'gender',
+                                    values:[
+                                        {label:'male', value:'m'},
+                                        {label:'female', value:'f'}
+                                    ]
+                                },
+                                {
+                                    name:'binary',
+                                    values:[
+                                        {label:'present', value:1},
+                                        {label:'absent', value:0}
+                                    ]
+                                }
+                            ];
+
+                            var element = window.getComponent('legendCanvas').getEl();
+                            var ctx = element.dom.getContext("2d");
+                            this.drawLegend(ctx, stuff);
+                        },
+                        scope: this.getMatrix2viz()
+                    },
+                    {
+                        xtype: 'button',
+                        text: 'png',
+                        width: 30,
+                        height: 20,
+                        handler: function() {
+                            var window = Ext.create('Ext.window.Window', {
+                                title: 'PNG',
+                                height: 200,
+                                width: 400,
+                                layout: 'fit',
+                                items: [
+                                    {
+                                        xtype: 'component',
+                                        autoEl: 'img',
+                                        itemId: 'pngImage'
+                                    }
+                                ]
+                            });
+                            window.show();
+                            var url = this.drawPng();
+                            var element = window.getComponent('pngImage').getEl().dom;
+                            element.src = url;
+                        },
+                        scope: this.getMatrix2viz()
+                    }
+                ]
+            },
+            {
+                xtype: 'panel',
+                layout: 'hbox',
+                width: 95,
+                height: 35,
+                items: [
+                    {
+                        xtype: 'button',
                         text: '5',
                         width: 20,
                         height: 20,

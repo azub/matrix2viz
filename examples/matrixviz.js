@@ -225,7 +225,7 @@ matrix.on('cell-mouse-click', function() {
 });
 
 matrix.on('label-mouse-in', function(index) {
-    t.update('Label Enter: '+index.index+','+index.subIndex);
+    t.update('Label Enter: '+index.index+','+index.subIndex+','+index.data);
     t.show();
 });
 
@@ -235,6 +235,6 @@ matrix.on('label-mouse-out', function() {
 });
 
 matrix.on('label-mouse-click', function(index) {
-    t.update('Label click: '+index.index+','+index.subIndex);
+    t.update('Label click: '+index.index+','+index.subIndex+','+index.data);
     t.show();
 });

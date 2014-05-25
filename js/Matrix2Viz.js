@@ -1,10 +1,10 @@
-Ext.require([
-    'Matrix',
-    'LabelPanel',
-    'VerticalLabelNames',
-    'HorizontalLabelNames',
-    'DefaultControlPanel'
-]);
+//Ext.require([
+//    'Matrix',
+//    'LabelPanel',
+//    'VerticalLabelNames',
+//    'HorizontalLabelNames',
+//    'DefaultControlPanel'
+//]);
 
 Ext.define('Matrix2Viz', {
     extend: 'Ext.panel.Panel',
@@ -192,7 +192,7 @@ Ext.define('Matrix2Viz', {
         this.northPanel = this.getComponent("northPanel");
 
         this.northPanel.insert(0,
-            Ext.create( this.getControlPanel(), {
+            Ext.create(this.getControlPanel(), {
                 itemId: 'controlPanel',
                 matrix2viz: this
             })
@@ -310,7 +310,7 @@ Ext.define('Matrix2Viz', {
         this.makeSnug();
     },
 
-    makeSnug: function() {
+    makeSnug: function () {
         this.matrix.setAutoScroll(false);
 
         // if matrix is smaller that available container, resize container to fit matrix.
@@ -348,6 +348,95 @@ Ext.define('Matrix2Viz', {
         this.matrix.setCellSize(cellSize);
 
         this.draw();
+    },
+
+    drawPng: function () {
+        // draw diagram components (labels, matrix, dendrograms)
+        // figure out their starting positions
+        //
+        var canvas = document.createElement('canvas');
+        canvas.width = this.width + 300;
+        canvas.height = this.height;
+
+        var ctx = canvas.getContext('2d');
+
+        var imageData = this.verticalLabelPanel.getImageData();
+        ctx.putImageData(imageData, 0, this.horizontalLabelPanel.height);
+
+        imageData = this.horizontalLabelPanel.getImageData();
+        ctx.putImageData(imageData, this.verticalLabelPanel.width, 0);
+
+        imageData = this.dendrogramH.getImageData();
+        ctx.putImageData(imageData, this.verticalLabelPanel.width, this.matrix.getHeight() + this.horizontalLabelPanel.height);
+
+        imageData = this.dendrogramV.getImageData();
+        ctx.putImageData(imageData, this.verticalLabelPanel.width + this.matrix.getWidth(), this.horizontalLabelPanel.height);
+
+        ctx.save();
+        ctx.translate(this.verticalLabelPanel.width, this.horizontalLabelPanel.height);
+        this.matrix.drawOn(ctx);
+        ctx.restore();
+
+        imageData = this.bottomLeftFillPanel.getImageData();
+        ctx.putImageData(imageData, 0, this.matrix.getHeight() + this.horizontalLabelPanel.height);
+
+        imageData = this.topRightFillPanel.getImageData();
+        ctx.putImageData(imageData, this.verticalLabelPanel.width + this.matrix.getWidth(), 0);
+
+        ctx.save();
+        ctx.translate(this.verticalLabelPanel.width + this.matrix.getWidth() + this.dendrogramV.dendrogramHeight, 0);
+
+        var stuff = [
+            {
+                name: 'gender',
+                values: [
+                    {label: 'male', value: 'm'},
+                    {label: 'female', value: 'f'}
+                ]
+            },
+            {
+                name: 'binary',
+                values: [
+                    {label: 'present', value: 1},
+                    {label: 'absent', value: 0}
+                ]
+            }
+        ];
+
+        this.drawLegend(ctx, stuff);
+
+        var new_image_url = canvas.toDataURL('image/png');
+
+        return new_image_url;
+    },
+
+    drawLegend: function (ctx, cellTypes) {
+        ctx.translate(0, 15);
+
+        for (var j = 0; j < cellTypes.length; j++) {
+            var cellType = cellTypes[j];
+            ctx.fillStyle = 'black';
+            ctx.fillText(cellType.name, 0, 0);
+
+            ctx.translate(20, 10);
+            var values = cellType.values;
+            for (var i = 0; i < values.length; i++) {
+                var value = values[i];
+                var renderFn = this.getRenderers().cell[cellType.name].render;
+                ctx.save();
+                ctx.translate(0, -10);
+                renderFn(ctx, value.value, 0, 0, {height: 10, width: 10});
+                ctx.restore();
+
+                ctx.save();
+                ctx.translate(10, 0);
+                ctx.fillText(value.label, 0, 0);
+                ctx.restore();
+
+                ctx.translate(0, 10);
+            }
+            ctx.translate(-20, 10);
+        }
     },
 
     fitToScreen: function () {
