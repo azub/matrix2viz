@@ -3,7 +3,7 @@ Ext.require([
     'LabelPanel',
     'VerticalLabelNames',
     'HorizontalLabelNames',
-    'DefaultControlPanel'
+    'MiniControlPanel'
 ]);
 
 Ext.define('Matrix2Viz', {
@@ -291,25 +291,8 @@ Ext.define('Matrix2Viz', {
     },
 
     /**
-     * Public API
+     * @private
      */
-
-    /**
-     * @public
-     */
-    draw: function () {
-
-        this.verticalLabelPanel.draw();
-        this.horizontalLabelPanel.draw();
-        this.dendrogramH.draw();
-        this.dendrogramV.draw();
-        this.matrix.draw();
-        this.bottomLeftFillPanel.draw();
-        this.topRightFillPanel.draw();
-
-        this.makeSnug();
-    },
-
     makeSnug: function () {
         this.matrix.setAutoScroll(false);
 
@@ -334,6 +317,26 @@ Ext.define('Matrix2Viz', {
     },
 
     /**
+     * Public API
+     */
+
+    /**
+     * @public
+     */
+    draw: function () {
+        this.verticalLabelPanel.draw();
+        this.horizontalLabelPanel.draw();
+        this.dendrogramH.draw();
+        this.dendrogramV.draw();
+        this.matrix.draw();
+        this.bottomLeftFillPanel.draw();
+        this.topRightFillPanel.draw();
+
+        this.makeSnug();
+    },
+
+
+    /**
      * @public
      */
     updateCellSizes: function (cellSize) {
@@ -350,10 +353,11 @@ Ext.define('Matrix2Viz', {
         this.draw();
     },
 
+    /**
+     * @public
+     *
+     */
     drawPng: function () {
-        // draw diagram components (labels, matrix, dendrograms)
-        // figure out their starting positions
-        //
         var canvas = document.createElement('canvas');
         canvas.width = this.width + 300;
         canvas.height = this.height;
@@ -372,10 +376,8 @@ Ext.define('Matrix2Viz', {
         imageData = this.dendrogramV.getImageData();
         ctx.putImageData(imageData, this.verticalLabelPanel.width + this.matrix.getWidth(), this.horizontalLabelPanel.height);
 
-        ctx.save();
-        ctx.translate(this.verticalLabelPanel.width, this.horizontalLabelPanel.height);
-        this.matrix.drawOn(ctx);
-        ctx.restore();
+        imageData = this.matrix.getImageData();
+        ctx.putImageData(imageData, this.verticalLabelPanel.width, this.horizontalLabelPanel.height);
 
         imageData = this.bottomLeftFillPanel.getImageData();
         ctx.putImageData(imageData, 0, this.matrix.getHeight() + this.horizontalLabelPanel.height);
@@ -410,6 +412,11 @@ Ext.define('Matrix2Viz', {
         return new_image_url;
     },
 
+    /**
+     * @public
+     * @param ctx
+     * @param cellTypes
+     */
     drawLegend: function (ctx, cellTypes) {
         ctx.translate(0, 15);
 

@@ -91,6 +91,8 @@ Ext.define('Dendrogram', {
     },
 
     draw: function () {
+        var isDendrogramCutOffEnabled = false; // TODO: Complete this feature
+
         this.refreshCanvasSize();
 
         if (this.clusterTree === null) return;
@@ -122,14 +124,14 @@ Ext.define('Dendrogram', {
                 var x, y;
                 if (orientation === "horizontal") {
                     x = xyLeft.x + (xyRight.x - xyLeft.x) / 2;
-                    if (node.level > 2) {
+                    if (isDendrogramCutOffEnabled && node.level > 2) {
                         y = 0;
                     } else {
                         y = height * (node.distance / maxDistance);
                     }
                 } else {
                     y = xyLeft.y + (xyRight.y - xyLeft.y) / 2;
-                    if (node.level > 2) {
+                    if (isDendrogramCutOffEnabled && node.level > 2) {
                         x = 0;
                     } else {
                         x = height * (node.distance / maxDistance);

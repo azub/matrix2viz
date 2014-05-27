@@ -1,0 +1,5 @@
+
+* label-mouse-in, label-mouse-out, label-mouse-click events now contain label data
+* Moved DefaultControlPanel out of the package. Clients are expected to extend MiniControlPanel and pass their own control panel
+type when instantiating Matrix2Viz.
+* Added drawPNG and drawColourLegend functions to Matrix2Viz.

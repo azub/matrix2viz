@@ -3,14 +3,14 @@
  */
 Ext.define('DefaultControlPanel', {
     alias: "widget.DefaultControlPanel",
-    extend: 'Ext.panel.Panel',
+    extend: 'MiniControlPanel',
     width: 100,
     height: 100,
     border: false,
     layout: 'vbox',
-    config: {
-        matrix2viz: null
-    },
+//    config: {
+//        matrix2viz: null
+//    },
 
     initComponent: function () {
         this.items = [

@@ -180,7 +180,7 @@ var matrix = Ext.create('Matrix2Viz', {
         height: 10
     },
 
-    controlPanel: 'DefaultControlPanel',
+    controlPanel: 'MyControlPanel',
 
     // TODO: add row/column options for both
     displayOptions: {

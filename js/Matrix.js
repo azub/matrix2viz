@@ -11,8 +11,6 @@
  *  - They should implement drawColourLegend()
  *  - Default functions will know about range.
  *  - Provide default implementation (pass hash of value:label, or just array of values)
- *
- *
  */
 Ext.define('Matrix', {
     alias: "widget.Matrix",
@@ -191,6 +189,10 @@ Ext.define('Matrix', {
 
     getPixelSize: function() {
         return this.matrixSize;
+    },
+
+    getImageData: function() {
+        return this.ctx.getImageData(0, 0, this.getWidth(), this.getHeight());
     },
 
     /**
